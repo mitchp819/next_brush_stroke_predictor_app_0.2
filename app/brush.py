@@ -1,4 +1,4 @@
-from app.drawing_canvas import DrawingCanvasGUI
+from drawing_canvas import DrawingCanvasGUI
 
 class BasicBrush: 
     """
@@ -6,7 +6,7 @@ class BasicBrush:
     """
     def __init__(self, drawing_canvas: DrawingCanvasGUI,):
         self.drawing_canvas = drawing_canvas
-        self.canvas = self.drawing_canvas.canvas
+        self.canvas = self.drawing_canvas._canvas
         self.canvas.bind("<Button-1>", self.on_mouse_down)
         self.canvas.bind("<B1-Motion>", self.create_mark)
         self.canvas.bind("<ButtonRelease-1>", self.on_mouse_released)
@@ -31,7 +31,7 @@ class RectangleMark:
     def create_canvas_mark(x: int, y: int, drawing_canvas: DrawingCanvasGUI):
         color = drawing_canvas.interface.color_hex
         size = drawing_canvas.interface.size 
-        canvas = drawing_canvas.canvas
+        canvas = drawing_canvas._canvas
 
         rectangle = canvas.create_rectangle(x, y, (x + 1), (y + 1), fill= color, width= size)
         return rectangle
@@ -39,7 +39,7 @@ class RectangleMark:
     @staticmethod
     def create_data_mark(rectangle: int, drawing_canvas: DrawingCanvasGUI):
         scalor = drawing_canvas.scalor
-        canvas = drawing_canvas.canvas
+        canvas = drawing_canvas._canvas
         color = drawing_canvas.interface.color
         width = drawing_canvas.interface.width
         height = drawing_canvas.interface.height

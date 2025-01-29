@@ -1,6 +1,7 @@
 import tkinter as tk
 import numpy as np
 import pandas as pd
+from PIL import Image, ImageTk, ImageGrab
 import time
 
 from brush import *
@@ -32,9 +33,9 @@ class DrawingCanvasGUI:
         self._scalor = scalor
         self.gui_width = self.interface.width * self.scalor
         self.gui_height = self.interface.height * self.scalor
-        self.canvas = tk.Canvas(master=container, width=self.gui_width, height=self.gui_height, bg='white')
+        self._canvas = tk.Canvas(master=container, width=self.gui_width, height=self.gui_height, bg='white')
         BasicBrush(self)
-        self.canvas.pack()
+        self._canvas.pack()
     
     @property
     def scalor(self):
@@ -45,25 +46,60 @@ class DrawingCanvasGUI:
         self._scalor = value
         self.gui_width = self.interface.width * self._scalor
         self.gui_height = self.interface.height * self._scalor
-        self.canvas.config(width = self.gui_width, height = self.gui_height)
+        canvas = self.get_pil_image()
+        self._canvas.config(width = self.gui_width, height = self.gui_height)
+        self.load_pil_image(canvas)
         pass
+
+    @property
+    def canvas(self):
+        return self._canvas
+    
+    @canvas.setter
+    def set_canvas(self, image):
+        if isinstance(image, Image):
+            self.load_pil_image(image)
+            return
+        if isinstance(image, np):
+            self.load_np_image(image)
+            return
+        raise ValueError("image must be a PIL Image or a Numpy Array")
+
+    def get_pil_image(self) -> Image:
+        x = self._canvas.winfo_rootx()
+        y = self._canvas.winfo_rooty()
+        x1 = x + self._canvas.winfo_width()
+        y1 = y + self._canvas.winfo_height()
+        image = ImageGrab.grab().crop((x, y, x1, y1))
+        return image
 
     def load_np_image(self, image: np):
         if image.shape != (self.gui_width, self.gui_height):
-            self.scale_np_image_to_canvas(image)
+            DataTransformation.scale_np_image(image, self.scalor)
             pass
         for row, column_array in enumerate(image):
             for col, pixel_value in enumerate(column_array):
                 hex_color = Color.greyscale_value_to_hex(pixel_value)
-                self.canvas.create_rectangle(
+                self._canvas.create_rectangle(
                     col, row, (col+1),
                     (row+1), fill=hex_color)
         pass
 
-    def scale_np_image_to_canvas(self, image: np):
+    def load_pil_image(self, image:Image):
+        image = image.resize((self.gui_width, self.gui_height), Image.NEAREST)
+        photo = ImageTk.PhotoImage(image)
+        self._canvas.create_image(0,0, anchor = 'NW', image=photo)
+        canvas.image = photo
+        pass
+    
+
+class DataTransformation:
+    @staticmethod
+    def scale_np_image(self, image: np, scale):
         pass
 
 class Color():
+    @staticmethod
     def hex_to_greyscale_value(hex_color: str):
         hex_color = hex_color.lstrip('#')
         r = int(hex_color[0:2], 16)
@@ -72,6 +108,7 @@ class Color():
         grayscale_value = round((r + g + b) / 3)
         return grayscale_value
     
+    @staticmethod
     def greyscale_value_to_hex(value):
         return f"#{value:02x}{value:02x}{value:02x}"
 
