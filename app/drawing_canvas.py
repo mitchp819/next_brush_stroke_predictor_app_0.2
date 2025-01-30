@@ -73,10 +73,9 @@ class DrawingCanvasGUI:
         image = ImageGrab.grab().crop((x, y, x1, y1))
         return image
 
-    def load_np_image(self, image: np):
+    def load_np_image(self, image: np) -> None:
         if image.shape != (self.gui_width, self.gui_height):
-            DataTransformation.scale_np_image(image, self.scalor)
-            pass
+            image = DataTransformation.transform_np_image(image, self.gui_width, self.gui_height)
         for row, column_array in enumerate(image):
             for col, pixel_value in enumerate(column_array):
                 hex_color = Color.greyscale_value_to_hex(pixel_value)
@@ -95,8 +94,20 @@ class DrawingCanvasGUI:
 
 class DataTransformation:
     @staticmethod
-    def scale_np_image(self, image: np, scale):
+    def scale_np_image(image: np, scale):
         pass
+    
+    @staticmethod
+    def transform_np_image(image: np, new_width: int, new_height: int) -> np:
+        """
+        Transforms a np.array image to a new width and height
+        """
+        pil_image = Image.fromarray(image)
+        resized_image = pil_image.resize(
+            (new_width, new_height),
+            resample = Image.NEAREST)
+        resized_np = np.array(resized_image)
+        return resized_np
 
 class Color():
     @staticmethod
