@@ -16,8 +16,8 @@ class BasicBrush:
         pass
 
     def create_mark(self, event):
-        rectangle = RectangleMark().create_canvas_mark(event.x, event.y, self.drawing_canvas)
-        RectangleMark().create_data_mark(rectangle, self.drawing_canvas)
+        rectangle = RectangleMark.create_canvas_mark(event.x, event.y, self.drawing_canvas)
+        RectangleMark.create_data_mark(rectangle, self.drawing_canvas)
 
     def on_mouse_released(self, event):
         pass   

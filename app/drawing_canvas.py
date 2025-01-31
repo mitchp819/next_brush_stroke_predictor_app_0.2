@@ -126,7 +126,20 @@ class Color():
 
 
 
+class TestButton:
+    def __init__(self, master, interface, canvas):
+        self.interface = interface
+        self.canvas = canvas
+        btn = tk.Button(
+            master, 
+            text= "test button does something",
+            command = self.on_button_click)
+        btn.pack()
+        pass
 
+    def on_button_click(self):
+        print("test button doing something")
+        pass
 
 if __name__ == "__main__":
     test_root = tk.Tk()
@@ -136,6 +149,7 @@ if __name__ == "__main__":
    
     interface = DrawingCanvasInterface(width=400, height=400)
     canvas = DrawingCanvasGUI(test_frame, interface, 1)
+    TestButton(test_root, interface, canvas)
     
     test_frame.pack()
     test_root.mainloop()
