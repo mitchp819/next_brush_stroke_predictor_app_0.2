@@ -5,6 +5,7 @@ from PIL import Image, ImageTk, ImageGrab
 import time
 
 from brush import *
+from dataset import Dataset
 
 WHITE_VALUE = 255
 STROKE_DEFAULT_VALUE = -1
@@ -21,8 +22,16 @@ class DrawingCanvasInterface:
         self.color_hex = 'black'
         self.size = 4
         self.canvas_data = np.ones((width, height), dtype= np.uint8) * WHITE_VALUE
-        self.stroke_data = np.full((width, height), fill_value= STROKE_DEFAULT_VALUE, dtype=np.int8)
-        pass
+        self.stroke_data = None
+        self.reset_stroke_data
+        self.dataset = Dataset("canvas", "stroke")
+    
+    def enter_data(self):
+        print(f"Entry: {self.dataset.entry_count} \t (canvas, stroke) {self.canvas_data.shape}")
+        self.dataset.append((self.canvas_data, self.stroke_data))
+    
+    def reset_stroke_data(self):
+        self.stroke_data = np.full((self.width, self.height), fill_value= STROKE_DEFAULT_VALUE, dtype=np.int8)
       
 class DrawingCanvasGUI:
     """
@@ -34,7 +43,7 @@ class DrawingCanvasGUI:
         self.gui_width = self.interface.width * self.scalor
         self.gui_height = self.interface.height * self.scalor
         self._canvas = tk.Canvas(master=container, width=self.gui_width, height=self.gui_height, bg='white')
-        BasicBrush(self)
+        self.brush = BasicBrush(self, self.interface)
         self._canvas.pack()
     
     @property
@@ -149,6 +158,7 @@ if __name__ == "__main__":
    
     interface = DrawingCanvasInterface(width=400, height=400)
     canvas = DrawingCanvasGUI(test_frame, interface, 1)
+    canvas.brush = AutoBrush(canvas, interface)
     TestButton(test_root, interface, canvas)
     
     test_frame.pack()

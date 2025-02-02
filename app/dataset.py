@@ -64,23 +64,23 @@ class Dataset:
     def __str__(self):
         return f'{self.dataset}\nEntry Count: {self.entry_count}\nFields: {self.fields}'
     
-    def insert(self, entry):
+    def append(self, entry):
         if isinstance(entry, tuple):
-            self.insert_tuple(entry)
+            self.append_tuple(entry)
             return
         if isinstance(entry, dict):
-            self.insert_dict(entry)
+            self.append_dict(entry)
             return
         raise ValueError("Entry must be type tuple or dict")
     
-    def insert_tuple(self, entry: tuple):
+    def append_tuple(self, entry: tuple):
         DatasetValidation.entry_matches_fields(entry, self.fields)
         for key, value in zip(self.dataset.keys(), entry):
             self.dataset[key].append(value)
         self.entry_count += 1
 
-
-    def insert_dict(self, entry: dict):
+    def append_dict(self, entry: dict):
+        #TODO hand inserting dictionarys (should handle dicts with multiple entrys?)
         raise ValueError("Dictionaries not configured")
 
     def save(self,  location: str = None, name:str = None):
@@ -88,9 +88,26 @@ class Dataset:
         PickleIO.save(self.dataset, path)
 
     def load(self, path: str):
-        ds = PickleIO.load(path)
+        ds: dict = PickleIO.load(path)
         entry_count = DatasetValidation.validate_dataset(ds)
         self.dataset = ds
         self.entry_count = entry_count
         self.fields = tuple(ds.keys())
 
+    def get_entry(self, index:int) -> tuple:
+        entry = []
+        for value in self.dataset.values():
+            entry.append(value[index])
+        return tuple(entry)
+    
+    def set_entry(self, index:int, new_entry:tuple):
+        """
+        WARNING function overwrites data at the index
+        """
+        DatasetValidation.entry_matches_fields(new_entry, self.fields)
+        for ds_value, entry_value in zip(self.dataset.values(), new_entry):
+            ds_value[index] = entry_value
+    
+    def delete_entry(self, index: int):
+        for value in self.dataset.values():
+            del value[index]

@@ -1,11 +1,12 @@
-from drawing_canvas import DrawingCanvasGUI
+from drawing_canvas import DrawingCanvasGUI, DrawingCanvasInterface
 
 class BasicBrush: 
     """
     Handles Canvas Events
     """
-    def __init__(self, drawing_canvas: DrawingCanvasGUI,):
+    def __init__(self, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface):
         self.drawing_canvas = drawing_canvas
+        self.drawing_interface = drawing_interface
         self.canvas = self.drawing_canvas._canvas
         self.canvas.bind("<Button-1>", self.on_mouse_down)
         self.canvas.bind("<B1-Motion>", self.create_mark)
@@ -16,11 +17,33 @@ class BasicBrush:
         pass
 
     def create_mark(self, event):
-        rectangle = RectangleMark.create_canvas_mark(event.x, event.y, self.drawing_canvas)
-        RectangleMark.create_data_mark(rectangle, self.drawing_canvas)
+        rectangle = RectangleMark.create_canvas_mark(event.x, event.y, self.drawing_canvas, self.drawing_interface)
+        RectangleMark.create_data_mark(rectangle, self.drawing_canvas, self.drawing_interface)
 
     def on_mouse_released(self, event):
-        pass   
+        pass  
+
+class AutoBrush: 
+    def __init__(self, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface ):
+        self.drawing_canvas = drawing_canvas
+        self.drawing_interface = drawing_interface
+        self.canvas = self.drawing_canvas._canvas
+        self.canvas.bind("<Button-1>", self.on_mouse_down)
+        self.canvas.bind("<B1-Motion>", self.create_mark)
+        self.canvas.bind("<ButtonRelease-1>", self.on_mouse_released)
+        
+    def on_mouse_down(self, event):
+        self.drawing_interface.reset_stroke_data()
+        self.create_mark(event)
+        pass
+
+    def create_mark(self, event):
+        rectangle = RectangleMark.create_canvas_mark(event.x, event.y, self.drawing_canvas, self.drawing_interface)
+        RectangleMark.create_data_mark(rectangle, self.drawing_canvas, self.drawing_interface)
+
+    def on_mouse_released(self, event):
+        self.drawing_interface.enter_data()
+        pass    
 
 
 class RectangleMark:
@@ -28,16 +51,16 @@ class RectangleMark:
     Creates Rectangle on Canvas
     """
     @staticmethod
-    def create_canvas_mark(x: int, y: int, drawing_canvas: DrawingCanvasGUI):
-        color = drawing_canvas.interface.color_hex
-        size = drawing_canvas.interface.size 
+    def create_canvas_mark(x: int, y: int, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface):
+        color = drawing_interface.color_hex
+        size = drawing_interface.size 
         canvas = drawing_canvas._canvas
 
         rectangle = canvas.create_rectangle(x, y, (x + 1), (y + 1), fill= color, width= size)
         return rectangle
         
     @staticmethod
-    def create_data_mark(rectangle: int, drawing_canvas: DrawingCanvasGUI):
+    def create_data_mark(rectangle: int, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface):
         scalor = drawing_canvas.scalor
         canvas = drawing_canvas._canvas
         color = drawing_canvas.interface.color

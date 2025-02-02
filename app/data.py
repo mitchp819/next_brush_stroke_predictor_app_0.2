@@ -25,10 +25,6 @@ class DataTransformation:
         resized_np = np.array(resized_image)
         return resized_np
 
-class DatasetTansformation:
-    @staticmethod
-    def cat_datasets():
-        pass
 
 
 
