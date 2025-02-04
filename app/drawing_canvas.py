@@ -6,6 +6,7 @@ import time
 
 from brush import *
 from dataset import Dataset
+from data_transform import DataTransformation
 
 WHITE_VALUE = 255
 STROKE_DEFAULT_VALUE = -1
@@ -20,18 +21,21 @@ class DrawingCanvasInterface:
         self.height = height
         self.color = 0
         self.color_hex = 'black'
-        self.size = 4
-        self.canvas_data = np.ones((width, height), dtype= np.uint8) * WHITE_VALUE
+        self.size = 1
+        self.canvas_data = np.ones((self.height, self.width), dtype= np.uint8) * WHITE_VALUE
         self.stroke_data = None
         self.reset_stroke_data
         self.dataset = Dataset("canvas", "stroke")
     
     def enter_data(self):
-        print(f"Entry: {self.dataset.entry_count} \t (canvas, stroke) {self.canvas_data.shape}")
+        #print(f"Entry: {self.dataset.entry_count} \t (canvas, stroke) {self.canvas_data.shape}")
+        #print(self.canvas_data)
+        pil_image = Image.fromarray(self.canvas_data)
+        pil_image.save("image.png")
         self.dataset.append((self.canvas_data, self.stroke_data))
     
     def reset_stroke_data(self):
-        self.stroke_data = np.full((self.width, self.height), fill_value= STROKE_DEFAULT_VALUE, dtype=np.int8)
+        self.stroke_data = np.full((self.height,self.width,), fill_value= STROKE_DEFAULT_VALUE, dtype=np.int8)
       
 class DrawingCanvasGUI:
     """
@@ -156,9 +160,9 @@ if __name__ == "__main__":
     test_root.config(bg = 'blue')
     test_frame = tk.Frame(test_root)
    
-    interface = DrawingCanvasInterface(width=400, height=400)
+    interface = DrawingCanvasInterface(width=700, height=400)
     canvas = DrawingCanvasGUI(test_frame, interface, 1)
-    canvas.brush = AutoBrush(canvas, interface)
+    canvas.brush = LineBrush(canvas, interface, mode="auto")
     TestButton(test_root, interface, canvas)
     
     test_frame.pack()
