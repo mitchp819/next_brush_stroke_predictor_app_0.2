@@ -2,7 +2,6 @@ import numpy as np
 import os
 from PIL import Image
 import pickle
-from dataset import Dataset
 
 WHITE_VALUE = 255
 STROKE_DEFAULT_VALUE = -1
@@ -33,22 +32,8 @@ class DataTransformation:
         resized_np = np.array(resized_image)
         return resized_np
     
-    
+    @staticmethod
+    def set_pixel_color(image: np.ndarray, x:int, y:int, color:int):
+        image[x,y] = color
 
 
-
-class TestDataset:
-    def __init__(self):
-        dataset = Dataset("canvas", "stroke")
-        #dataset.insert((11,12))
-        #dataset.insert((21,22))
-        #dataset.save("data", "test")
-        dataset.load("data\\test.pkl")
-        print(dataset)
-
-        pass
-
-
-if __name__ == "__main__":
-    TestDataset()
-    pass

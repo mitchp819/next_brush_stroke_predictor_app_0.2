@@ -52,6 +52,13 @@ class Dataset:
     Stores data in a Dictionary.
     Args
         *fields: Define column headers
+    Functions
+        append: add element to end of dataset (entry)
+        save: save dataset to folder (location, name)
+        load: load an existing pickeled dataset
+        get_entry: returns entry at an (index)
+        set_entry: Overwrites an entry at an (index)
+        delete_entry: Deletes an entry at an (index)
     """
     def __init__(self, *fields):
         self.fields = fields

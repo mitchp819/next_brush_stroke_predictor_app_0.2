@@ -4,9 +4,9 @@ import pandas as pd
 from PIL import Image, ImageTk, ImageGrab
 import time
 
-from brush import *
-from dataset import Dataset
-from data_transform import DataTransformation
+from app.brush import *
+from data import *
+
 
 WHITE_VALUE = 255
 STROKE_DEFAULT_VALUE = -1
@@ -15,13 +15,15 @@ STROKE_DEFAULT_VALUE = -1
 class DrawingCanvasInterface:
     """
     Stores Data for the Drawing Canvas
+    functions:
+        enter_data: 
     """
     def __init__(self, width: int, height: int):
         self.width = width
         self.height = height
         self.color = 0
         self.color_hex = 'black'
-        self.size = 1
+        self.size = 3
         self.canvas_data = np.ones((self.height, self.width), dtype= np.uint8) * WHITE_VALUE
         self.stroke_data = None
         self.reset_stroke_data
@@ -36,6 +38,14 @@ class DrawingCanvasInterface:
     
     def reset_stroke_data(self):
         self.stroke_data = np.full((self.height,self.width,), fill_value= STROKE_DEFAULT_VALUE, dtype=np.int8)
+
+    def save_data(self, location:str = None, name:str = None):
+        if location:
+            self.location = location
+        if name:
+            self.name = name
+        self.dataset.save("data", "name")
+        print("Dataset Saved")
       
 class DrawingCanvasGUI:
     """
@@ -138,22 +148,6 @@ class Color():
 
 
 
-
-class TestButton:
-    def __init__(self, master, interface, canvas):
-        self.interface = interface
-        self.canvas = canvas
-        btn = tk.Button(
-            master, 
-            text= "test button does something",
-            command = self.on_button_click)
-        btn.pack()
-        pass
-
-    def on_button_click(self):
-        print("test button doing something")
-        pass
-
 if __name__ == "__main__":
     test_root = tk.Tk()
     test_root.geometry("800x600")
@@ -162,8 +156,7 @@ if __name__ == "__main__":
    
     interface = DrawingCanvasInterface(width=700, height=400)
     canvas = DrawingCanvasGUI(test_frame, interface, 1)
-    canvas.brush = LineBrush(canvas, interface, mode="auto")
-    TestButton(test_root, interface, canvas)
+    canvas.brush = BasicBrush(canvas, interface, mode="auto")
     
     test_frame.pack()
     test_root.mainloop()

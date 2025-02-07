@@ -1,5 +1,6 @@
-from drawing_canvas import DrawingCanvasGUI, DrawingCanvasInterface
 import numpy as np
+from app.drawing_canvas import DrawingCanvasGUI, DrawingCanvasInterface
+from data import DataTransformation
 
 class BasicBrush: 
     """
@@ -71,33 +72,28 @@ class LineMark:
     def create_data_line(line: int, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface):
         scalor = drawing_canvas.scalor
         canvas = drawing_canvas._canvas
-        color = drawing_interface.color
-        width = drawing_interface.width
-        height = drawing_interface.height
-        images = [drawing_interface.canvas_data, drawing_interface.stroke_data]
         x0, y0, x1, y1 = canvas.coords(line)
         x0 = int(x0 // scalor)
         y0 = int(y0 // scalor)
         x1 = int(x1 // scalor)
         y1 = int(y1 // scalor)
-        LineMark.bresenham_alg(x0,y0,x1,y1,height, width, color, images)
-    
+        LineMark.bresenham_alg(x0,y0,x1,y1, drawing_interface)
+
     @staticmethod
-    def bresenham_alg(x0:int, y0:int, x1:int, y1:int, h_bound:int, w_bound:int, color: int, images: list):
+    def bresenham_alg(x0:int, y0:int, x1:int, y1:int, drawing_interface: DrawingCanvasInterface):
+        width = drawing_interface.width
+        height = drawing_interface.height
         dx = abs(x1 - x0)
         dy = abs(y1 - y0)
-        step_direction_x = 1 if x0 < x1 else -1
+        step_direction_x = 1 if x0 < x1 else -1                                
         step_direction_y = 1 if y0 < y1 else -1
         error = dx - dy
         while True:
-            print(f"(x0:{x0}, y0:{y0}), (x1:{x1}, y1:{y1})")
-            if not CanvasFunctions.in_bounds(x0, y0, h_bound, w_bound):
-                print("Line out of bounds")
-                break
-            for image in images:
-                image[y0, x0] = color
+            #print(f"(x0:{x0}, y0:{y0}), (x1:{x1}, y1:{y1})")
+            if not CanvasFunctions.in_bounds(x0, y0, width, height):
+                break                                                                                        
+            LineMark.bresham_draw_width(x0, y0, dx, dy, drawing_interface)
             if x0 == x1 and y0 == y1:
-                print("Line at end")
                 break
             e2 = error * 2
             if e2 > -dy:
@@ -106,6 +102,35 @@ class LineMark:
             if e2 < dx:
                 error += dx
                 y0 += step_direction_y
+    
+    @staticmethod
+    def bresham_draw_width(y:int, x:int, dx, dy, drawing_interface: DrawingCanvasInterface):
+        images = [drawing_interface.canvas_data, drawing_interface.stroke_data]
+        size = drawing_interface.size
+        color = drawing_interface.color
+        width = drawing_interface.width
+        height = drawing_interface.height
+        for s in range(size//2 + 1):
+            if(dx<=dy):
+                lower_x = x - s
+                upper_x = x + s
+                lower_y = y
+                upper_y = y
+            if(dy<=dx):
+                lower_x = x
+                upper_x = x
+                lower_y = y - s
+                upper_y = y + s
+            for image in images:
+                if CanvasFunctions.in_bounds(lower_x, lower_y, width, height):
+                    DataTransformation.set_pixel_color(image, lower_x, lower_y,color)
+                if CanvasFunctions.in_bounds(upper_x, upper_y, width, height):
+                    DataTransformation.set_pixel_color(image, upper_x, upper_y,color)
+        for image in images:
+            DataTransformation.set_pixel_color(image, x, y, color)
+
+
+
 
 
 class RectangleMark:
@@ -139,12 +164,12 @@ class RectangleMark:
         for x in range(x1, x2):
             for y in range(y1, y2):
                 if (x < width and x >= 0 and y < height and y >= 0):
-                    canvas_data[y, x] = color
-                    stroke_data[y, x] = color
+                    DataTransformation.set_pixel_color(canvas_data, y, x, color)
+                    DataTransformation.set_pixel_color(stroke_data, y, x, color)
 
 class CanvasFunctions:
     @staticmethod 
-    def in_bounds(x,y,height,width) -> bool:
+    def in_bounds(x,y,width, height) -> bool:
         if (x < width and x >= 0 and y < height and y >= 0):
             return True
         else:
