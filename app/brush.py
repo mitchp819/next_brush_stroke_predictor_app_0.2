@@ -1,15 +1,17 @@
 import numpy as np
-from app.drawing_canvas import DrawingCanvasGUI, DrawingCanvasInterface
-from data import DataTransformation
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from app import DrawingCanvasGUI, DrawingCanvasInterface
+    from data import DataTransformation
 
 class BasicBrush: 
     """
     Handles Canvas Events
     """
-    def __init__(self, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface, mode:str = "manual"):
+    def __init__(self, drawing_canvas: 'DrawingCanvasGUI', drawing_interface: 'DrawingCanvasInterface', mode:str = "manual"):
         self.drawing_canvas = drawing_canvas
         self.drawing_interface = drawing_interface
-        self.canvas = self.drawing_canvas._canvas
+        self.canvas = self.drawing_canvas.canvas
         self.mode = mode
         self.canvas.bind("<Button-1>", self.on_mouse_down)
         self.canvas.bind("<B1-Motion>", self.create_mark)
@@ -29,7 +31,7 @@ class BasicBrush:
             self.drawing_interface.enter_data()
 
 class LineBrush:
-    def __init__(self, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface, mode: str = "manual"):
+    def __init__(self, drawing_canvas: 'DrawingCanvasGUI', drawing_interface: 'DrawingCanvasInterface', mode: str = "manual"):
         self.drawing_canvas = drawing_canvas
         self.drawing_interface = drawing_interface
         self.canvas = self.drawing_canvas._canvas
@@ -61,7 +63,7 @@ class LineMark:
     Creates Line on Canvas
     """
     @staticmethod
-    def create_canvas_line(x0: int, y0: int, x1: int, y1:int, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface):
+    def create_canvas_line(x0: int, y0: int, x1: int, y1:int, drawing_canvas: 'DrawingCanvasGUI', drawing_interface: 'DrawingCanvasInterface'):
         color = drawing_interface.color_hex
         size = drawing_interface.size 
         canvas = drawing_canvas._canvas
@@ -69,7 +71,7 @@ class LineMark:
         return line
     
     @staticmethod
-    def create_data_line(line: int, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface):
+    def create_data_line(line: int, drawing_canvas: 'DrawingCanvasGUI', drawing_interface: 'DrawingCanvasInterface'):
         scalor = drawing_canvas.scalor
         canvas = drawing_canvas._canvas
         x0, y0, x1, y1 = canvas.coords(line)
@@ -80,7 +82,7 @@ class LineMark:
         LineMark.bresenham_alg(x0,y0,x1,y1, drawing_interface)
 
     @staticmethod
-    def bresenham_alg(x0:int, y0:int, x1:int, y1:int, drawing_interface: DrawingCanvasInterface):
+    def bresenham_alg(x0:int, y0:int, x1:int, y1:int, drawing_interface: 'DrawingCanvasInterface'):
         width = drawing_interface.width
         height = drawing_interface.height
         dx = abs(x1 - x0)
@@ -104,7 +106,7 @@ class LineMark:
                 y0 += step_direction_y
     
     @staticmethod
-    def bresham_draw_width(y:int, x:int, dx, dy, drawing_interface: DrawingCanvasInterface):
+    def bresham_draw_width(y:int, x:int, dx, dy, drawing_interface: 'DrawingCanvasInterface'):
         images = [drawing_interface.canvas_data, drawing_interface.stroke_data]
         size = drawing_interface.size
         color = drawing_interface.color
@@ -138,7 +140,7 @@ class RectangleMark:
     Creates Rectangle on Canvas
     """
     @staticmethod
-    def create_canvas_mark(x: int, y: int, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface):
+    def create_canvas_mark(x: int, y: int, drawing_canvas: 'DrawingCanvasGUI', drawing_interface: 'DrawingCanvasInterface'):
         color = drawing_interface.color_hex
         size = drawing_interface.size 
         canvas = drawing_canvas._canvas
@@ -146,7 +148,7 @@ class RectangleMark:
         return rectangle
         
     @staticmethod
-    def create_data_mark(rectangle: int, drawing_canvas: DrawingCanvasGUI, drawing_interface: DrawingCanvasInterface):
+    def create_data_mark(rectangle: int, drawing_canvas: 'DrawingCanvasGUI', drawing_interface: 'DrawingCanvasInterface'):
         scalor = drawing_canvas.scalor
         canvas = drawing_canvas._canvas
         color = drawing_interface.color

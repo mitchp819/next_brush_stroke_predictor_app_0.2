@@ -6,7 +6,7 @@ class MenuBar:
     def __init__(self, root:tk.Tk):
         menu_bar = Menu(root)
         root.config(menu = menu_bar)
-        FileMenu(menu_bar)
+        #FileMenu(menu_bar)
         DataBaseMenu(menu_bar)
         DataSetMenu(menu_bar)
         pass
