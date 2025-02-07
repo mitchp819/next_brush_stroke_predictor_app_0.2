@@ -1,19 +1,23 @@
 import tkinter as tk
 from tkinter import Menu
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from app import DrawingCanvasGUI, DrawingCanvasInterface
 
 
 class MenuBar:
-    def __init__(self, root:tk.Tk):
+    def __init__(self, root:tk.Tk, drawing_interface: 'DrawingCanvasInterface'):
         menu_bar = Menu(root)
         root.config(menu = menu_bar)
-        #FileMenu(menu_bar)
+        FileMenu(menu_bar, drawing_interface)
         DataBaseMenu(menu_bar)
         DataSetMenu(menu_bar)
         pass
 
 class FileMenu:
     from app.drawing_canvas import DrawingCanvasInterface
-    def __init__(self, menu_bar: tk.Menu, drawing_interface: DrawingCanvasInterface):
+    def __init__(self, menu_bar: tk.Menu, drawing_interface: 'DrawingCanvasInterface'):
         file_menu = Menu(menu_bar, tearoff=0)
         #TODO File Commands {New, Load, Save, Save As}
         file_menu.add_command(

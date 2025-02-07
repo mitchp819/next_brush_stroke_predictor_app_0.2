@@ -1,8 +1,9 @@
 import numpy as np
+from data import DataTransformation
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from app import DrawingCanvasGUI, DrawingCanvasInterface
-    from data import DataTransformation
+    
 
 class BasicBrush: 
     """

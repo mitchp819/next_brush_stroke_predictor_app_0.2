@@ -10,7 +10,7 @@ if __name__ == "__main__":
     interface = DrawingCanvasInterface(width=700, height=400)
     canvas = DrawingCanvasGUI(test_frame, interface, 1)
     canvas.brush = BasicBrush(canvas, interface, mode="auto")
-    MenuBar(test_root)
+    MenuBar(test_root, interface)
     
     test_frame.pack()
     test_root.mainloop()
