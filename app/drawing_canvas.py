@@ -44,7 +44,7 @@ class DrawingCanvasInterface:
             self.location = location
         if name:
             self.name = name
-        self.dataset.save("data", "name")
+        self.dataset.save("dataset", "name")
         print("Dataset Saved")
       
 class DrawingCanvasGUI:
