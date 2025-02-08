@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from PIL import Image
+from PIL import Image, ImageTk
 import pickle
 
 WHITE_VALUE = 255
@@ -26,14 +26,35 @@ class DataTransformation:
         Transforms a np.array image to a new width and height
         """
         pil_image = Image.fromarray(image)
-        resized_image = pil_image.resize(
-            (new_width, new_height),
-            resample = Image.NEAREST)
+        resized_image = DataTransformation.transform_pil_image(pil_image, new_width, new_height)
         resized_np = np.array(resized_image)
         return resized_np
-    
+
+    @staticmethod
+    def transform_pil_image(pil_image: Image, new_width:int=None, new_height:int=None,):
+        img_width, img_height = pil_image.size
+        if new_width != None and new_height == None:
+            scale:float = new_width / img_width
+            new_height = int(img_height * scale)
+        elif new_width == None and new_height != None:
+            scale:float = new_height / img_height
+            new_width = int(img_width * scale)
+        elif new_width == None and new_height == None:
+            new_width = img_width
+            new_height = img_height
+
+        resized_image = pil_image.resize(
+            (new_width, new_height),
+            resample = Image.NEAREST) 
+        return resized_image
+
     @staticmethod
     def set_pixel_color(image: np.ndarray, x:int, y:int, color:int):
         image[x,y] = color
+    
+    @staticmethod
+    def np_image_to_tk(image:np.ndarray, new_width: int = None, new_height = None):
+        pil_image = Image.fromarray(image, mode='L')
+        return ImageTk.PhotoImage(pil_image)
 
 

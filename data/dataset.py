@@ -31,7 +31,12 @@ class DatasetValidation:
                 print(f"Error: {e}")
     
     @staticmethod
-    def validate_dataset(dataset: dict):
+    def validate_dataset(dataset: dict, expected_fields:list = None):
+        """
+        Checks if all columns have the same number of rows 
+
+        Returns number of rows 
+        """
         field_list = []
         prev_col_len: int = None
         for key, value in dataset.items():
@@ -39,8 +44,23 @@ class DatasetValidation:
             current_col_len = len(value)
             DatasetValidation.col_len_match(current_col_len , prev_col_len)
             prev_col_len = current_col_len 
+        if expected_fields != None:
+            DatasetValidation.compare_fields(expected_fields, field_list)
+        print(f"Dataset Valid. Fields: {str(field_list)}")
         return prev_col_len
     
+    @staticmethod
+    def compare_fields(expected_fields, real_fields):
+        for expected_field in expected_fields:
+            field_exists = False
+            for real_field in real_fields:
+                if expected_field == real_field:
+                    field_exists = True
+            try:
+                if field_exists == False:
+                    raise ValueError(f"Expected Field: {expected_field}, not found in dataset. Dataset Fields: {str(real_fields)}")
+            except ValueError as e:
+                print(f"Error: {e}")
 
 class DatasetTransformation:
     @staticmethod
@@ -94,9 +114,9 @@ class Dataset:
         path = os.path.join(location, name)
         PickleIO.save(self.dataset, path)
 
-    def load(self, path: str):
+    def load(self, path: str, expected_fields: list = None):
         ds: dict = PickleIO.load(path)
-        entry_count = DatasetValidation.validate_dataset(ds)
+        entry_count = DatasetValidation.validate_dataset(ds, expected_fields)
         self.dataset = ds
         self.entry_count = entry_count
         self.fields = tuple(ds.keys())
