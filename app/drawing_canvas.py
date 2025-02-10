@@ -34,7 +34,9 @@ class DrawingCanvasInterface:
         #print(self.canvas_data)
         pil_image = Image.fromarray(self.canvas_data)
         pil_image.save("image.png")
-        self.dataset.append((self.canvas_data, self.stroke_data))
+        canvas = self.canvas_data.copy()
+        stroke = self.stroke_data.copy()
+        self.dataset.append((canvas, stroke))
     
     def reset_stroke_data(self):
         self.stroke_data = np.full((self.height,self.width,), fill_value= STROKE_DEFAULT_VALUE, dtype=np.int8)

@@ -54,7 +54,8 @@ class DataTransformation:
     
     @staticmethod
     def np_image_to_tk(image:np.ndarray, new_width: int = None, new_height = None):
-        pil_image = Image.fromarray(image, mode='L')
-        return ImageTk.PhotoImage(pil_image)
+        pil_image = Image.fromarray(image, mode= "L")
+        tk_image = ImageTk.PhotoImage(pil_image)
+        return tk_image
 
 
