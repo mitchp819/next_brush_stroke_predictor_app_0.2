@@ -4,7 +4,7 @@ import pandas as pd
 from PIL import Image, ImageTk, ImageGrab
 import time
 
-from app.brush import *
+from drawing_app.brush import *
 from data import *
 
 

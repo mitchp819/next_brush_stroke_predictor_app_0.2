@@ -1,5 +1,5 @@
 import tkinter as tk
-from app import DrawingCanvasGUI, DrawingCanvasInterface, BasicBrush, MenuBar
+from drawing_app import DrawingCanvasGUI, DrawingCanvasInterface, BasicBrush, MenuBar
 
 if __name__ == "__main__":
     test_root = tk.Tk()

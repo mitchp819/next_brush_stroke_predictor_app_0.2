@@ -2,7 +2,7 @@ import numpy as np
 from data import DataTransformation
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from app import DrawingCanvasGUI, DrawingCanvasInterface
+    from drawing_app import DrawingCanvasGUI, DrawingCanvasInterface
     
 
 class BasicBrush: 

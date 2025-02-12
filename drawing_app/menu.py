@@ -3,7 +3,7 @@ from tkinter import Menu
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from app import DrawingCanvasGUI, DrawingCanvasInterface
+    from drawing_app import DrawingCanvasGUI, DrawingCanvasInterface
 
 
 class MenuBar:
@@ -16,7 +16,7 @@ class MenuBar:
         pass
 
 class FileMenu:
-    from app.drawing_canvas import DrawingCanvasInterface
+    from drawing_app.drawing_canvas import DrawingCanvasInterface
     def __init__(self, menu_bar: tk.Menu, drawing_interface: 'DrawingCanvasInterface'):
         file_menu = Menu(menu_bar, tearoff=0)
         #TODO File Commands {New, Load, Save, Save As}
