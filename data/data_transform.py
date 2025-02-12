@@ -31,20 +31,17 @@ class DataTransformation:
         return resized_np
 
     @staticmethod
-    def transform_pil_image(pil_image: Image, new_width:int=None, new_height:int=None,):
+    def transform_pil_image(pil_image: Image, new_width:int=None, new_height:int=None) -> Image:
+        """
+        Transforms a PIL image to a new width and/or height. 
+        If blank value, new value will preserve the scale of the image. 
+        """
+        if new_width == None and new_height == None:
+            return pil_image
         img_width, img_height = pil_image.size
-        if new_width != None and new_height == None:
-            scale:float = new_width / img_width
-            new_height = int(img_height * scale)
-        elif new_width == None and new_height != None:
-            scale:float = new_height / img_height
-            new_width = int(img_width * scale)
-        elif new_width == None and new_height == None:
-            new_width = img_width
-            new_height = img_height
-
+        final_width, final_height = DataTransformation.scale_cords(img_width, img_height, new_width, new_height)
         resized_image = pil_image.resize(
-            (new_width, new_height),
+            (final_width, final_height),
             resample = Image.NEAREST) 
         return resized_image
 
@@ -53,9 +50,26 @@ class DataTransformation:
         image[x,y] = color
     
     @staticmethod
-    def np_image_to_tk(image:np.ndarray, new_width: int = None, new_height = None):
+    def np_image_to_tk(image:np.ndarray, new_width: int = None, new_height: int = None):
         pil_image = Image.fromarray(image, mode='L')
-        tk_image = ImageTk.PhotoImage(pil_image)
+        resized_img = DataTransformation.transform_pil_image(pil_image, new_width, new_height)
+        tk_image = ImageTk.PhotoImage(resized_img)
         return tk_image
 
-
+    @staticmethod
+    def scale_cords(img_width: int, img_height:int, new_width:int=None, new_height:int=None):
+        if new_width != None and new_height == None:
+            scale:float = new_width / img_width
+            final_width = new_width
+            final_height = int(img_height * scale)
+        if new_width == None and new_height != None:
+            scale:float = new_height / img_height
+            final_width = int(img_width * scale)
+            final_height = new_height
+        if new_width == None and new_height == None:
+            final_width = img_width
+            final_height = img_height
+        if new_width != None and new_height != None:
+            final_width = new_width
+            final_height = new_height
+        return (final_width, final_height)
