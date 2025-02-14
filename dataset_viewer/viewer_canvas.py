@@ -3,6 +3,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 
 from data import DatasetValidation as dv, DataTransformation as dt
+from ui import ScrollContainer
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -20,8 +21,8 @@ class EntryView:
         self.create_entrys(entry_frame, dataset)
         
         
-
-    def create_entrys(self, container:tk, cs_dataset:'Dataset'):
+    @staticmethod
+    def create_entrys( container:tk, cs_dataset:'Dataset'):
         #Does this need to be faster? 
         ds = cs_dataset.dataset
         row_count = cs_dataset.entry_count
@@ -34,10 +35,10 @@ class EntryView:
             lbl.pack()
             canvas = dt.np_image_to_tk(canvas_entrys[row], new_width= 400)
             stroke = dt.np_image_to_tk(stroke_entrys[row], new_width= 400)
-            self.entry_row(holder_frame, canvas, stroke, "(100x100)", "1:1")
+            EntryView.entry_row(holder_frame, canvas, stroke, "(100x100)", "1:1")
 
-    
-    def entry_row(self, container:tk.Widget, canvas:tk.PhotoImage, stroke:tk.PhotoImage, size:str =None, ratio:str = None):
+    @staticmethod
+    def entry_row( container:tk.Widget, canvas:tk.PhotoImage, stroke:tk.PhotoImage, size:str =None, ratio:str = None):
         entry_frame = tk.Frame(container)
         entry_frame.columnconfigure(0, weight = 3)
         entry_frame.columnconfigure(1, weight = 3)
@@ -56,38 +57,5 @@ class EntryView:
         subframe.grid(column=2, row = 0)
         entry_frame.pack() 
     
-    def image_label(self, container:tk.Widget, image: tk.PhotoImage):
-        label = tk.Label(container, image= image)
-        label.image = image
 
 
-def get_container_size(container:tk.Frame):
-    window_width = container.winfo_width()
-    window_height = container.winfo_height()
-    return (window_width, window_height)
-
-class ScrollContainer:
-    @staticmethod
-    def create_scrollbar(container, width, height) -> ttk.Frame:
-        scroll_canvas = tk.Canvas(container, width=width, height=height)
-        scrollbar = ttk.Scrollbar(container, orient='vertical', command = scroll_canvas.yview)
-        scrollbar.pack(side='right', fill='y')
-        scroll_canvas.pack(side = 'left', fill='both', expand=True)
-        scroll_canvas.configure(yscrollcommand=scrollbar.set)
-        scrollable_frame = ttk.Frame(scroll_canvas)
-        scroll_canvas.create_window((0,0), window= scrollable_frame, anchor='nw')
-        scrollable_frame.bind(
-            "<Configure>", lambda event: ScrollContainer.on_configure(event, scroll_canvas))
-        scroll_canvas.bind_all(
-            "<MouseWheel>", lambda event: ScrollContainer.on_mouse_wheel(event, scroll_canvas))
-        return scrollable_frame
-
-    @staticmethod
-    def on_configure(event, scroll_canvas:tk.Canvas):
-        scroll_canvas.configure(scrollregion=scroll_canvas.bbox('all'))
-        scroll_canvas.itemconfigure("window", width = event.width)
-        pass
-
-    @staticmethod
-    def on_mouse_wheel(event, scroll_canvas: tk.Canvas):
-        scroll_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")

@@ -1,7 +1,7 @@
 import tkinter as tk
 from data import Dataset
 from drawing_app import DrawingCanvasGUI
-from ds_viewer import EntryView
+from dataset_viewer import EntryView
 
 if __name__ == "__main__":
     dataset = Dataset()

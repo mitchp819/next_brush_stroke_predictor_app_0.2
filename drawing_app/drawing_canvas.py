@@ -1,8 +1,7 @@
 import tkinter as tk
 import numpy as np
-import pandas as pd
 from PIL import Image, ImageTk, ImageGrab
-import time
+
 
 from drawing_app.brush import *
 from data import *
@@ -25,6 +24,7 @@ class DrawingCanvasInterface:
         self.color_hex = 'black'
         self.size = 3
         self.canvas_data = np.ones((self.height, self.width), dtype= np.uint8) * WHITE_VALUE
+        self.prev_canvas_data = np.ones((self.height, self.width), dtype= np.uint8) * WHITE_VALUE
         self.stroke_data = None
         self.reset_stroke_data
         self.dataset = Dataset("canvas", "stroke")
@@ -34,9 +34,10 @@ class DrawingCanvasInterface:
         #print(self.canvas_data)
         pil_image = Image.fromarray(self.canvas_data)
         pil_image.save("image.png")
-        canvas = self.canvas_data.copy()
+        canvas = self.prev_canvas_data.copy()
         stroke = self.stroke_data.copy()
         self.dataset.append((canvas, stroke))
+        self.prev_canvas_data = self.canvas_data.copy()
     
     def reset_stroke_data(self):
         self.stroke_data = np.full((self.height,self.width,), fill_value= STROKE_DEFAULT_VALUE, dtype=np.int8)
@@ -134,7 +135,7 @@ class DataTransformation:
         resized_np = np.array(resized_image)
         return resized_np
 
-class Color():
+class Color:
     @staticmethod
     def hex_to_greyscale_value(hex_color: str):
         hex_color = hex_color.lstrip('#')

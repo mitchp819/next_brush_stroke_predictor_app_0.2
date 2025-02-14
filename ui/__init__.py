@@ -1,4 +1,4 @@
-from scrollbar import ScrollContainer
+from ui.scrollbar import ScrollContainer
 
 __all__ = [
     "ScrollContainer"
