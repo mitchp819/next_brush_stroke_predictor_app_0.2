@@ -62,7 +62,6 @@ class Variable:
         self.notify_observers("setter")
 
     def increment(self, step):
-        print(self._value)
         new_value = self._value + step
         if not self.in_bounds(new_value):
             return
@@ -122,7 +121,6 @@ class NumberEntry:
         self.entry_box.insert(0, str(self.variable.value))
 
     def validate_input(self, new_value):
-        print(new_value)
         if new_value != "":
             self.variable.value = new_value
             self.variable.notify_observers("any")
@@ -168,7 +166,6 @@ class SimpleSlider:
 
     def update(self, new_value, signal):
         self.int_var.set(new_value)
-        #self.slider.update()
 
     def set_min_max(self, variable: Variable, min , max):
         if variable.max != None:
@@ -176,13 +173,25 @@ class SimpleSlider:
         elif max:
             self.max = max
         else:
-            raise ValueError("Simple Slider needs a max value")
+            print("ERROR: Simple Slider needs a max value.  Defaulting to 100")
+            self.max = 100
 
         if variable.min != None:
             self.min = int(variable.min)
         elif min:
             self.min = min
         else:
-            raise ValueError("Simple Slider needs a min value")
+            print("ERROR: Simple Slider needs a min value. Defaulting to 0")
+            self.min = 0
 
 
+class ValueSetterPack: 
+    def __init__(self, container, value: Variable = None, slider_min:int = None, slider_max:int = None,):
+        if value == None: 
+            value = Variable(50)
+        main_frame = tk.Frame(container)
+        main_frame.pack()
+        IncrementButton(main_frame, value, orientation= "horizontal")
+        NumberEntry(main_frame, value)
+        SimpleSlider(main_frame, value, slider_min, slider_max)
+        pass

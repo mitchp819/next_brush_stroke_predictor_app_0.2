@@ -1,6 +1,6 @@
 import tkinter as tk
 from drawing_app import GreyScalePicker
-from ui import IncrementButton, NumberEntry, Variable, SimpleSlider
+from ui import Variable, ValueSetterPack
 if __name__ == "__main__":
     test_root = tk.Tk()
     test_root.geometry("800x600")
@@ -9,9 +9,7 @@ if __name__ == "__main__":
     var = Variable(10, 0 ,255)
 
 
-    IncrementButton(test_frame, var, orientation= "horizontal")
-    NumberEntry(test_frame, var)
-    SimpleSlider(test_frame, var)
+    ValueSetterPack(test_frame)
     
     
     test_frame.pack()

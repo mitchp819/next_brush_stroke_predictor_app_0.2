@@ -1,7 +1,10 @@
 import tkinter as tk
 import numpy as np
 from PIL import Image, ImageTk, ImageGrab
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ui.value_setters import Variable
+    
 
 from drawing_app.brush import *
 from data import *
@@ -17,12 +20,12 @@ class DrawingCanvasInterface:
     functions:
         enter_data: 
     """
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, brush_size: 'Variable', color_value: 'Variable'):
         self.width = width
         self.height = height
-        self.color = 0
+        self.color = color_value.value
         self.color_hex = 'black'
-        self.size = 3
+        self.size = brush_size.value
         self.canvas_data = np.ones((self.height, self.width), dtype= np.uint8) * WHITE_VALUE
         self.prev_canvas_data = np.ones((self.height, self.width), dtype= np.uint8) * WHITE_VALUE
         self.stroke_data = None
@@ -60,7 +63,7 @@ class DrawingCanvasGUI:
         self.gui_width = self.interface.width * self.scalor
         self.gui_height = self.interface.height * self.scalor
         self._canvas = tk.Canvas(master=container, width=self.gui_width, height=self.gui_height, bg='white')
-        self.brush = BasicBrush(self, self.interface)
+        self.brush = BasicBrush(self, self.interface, "auto")
         self._canvas.pack()
     
     @property
